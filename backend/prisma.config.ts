@@ -1,3 +1,4 @@
+import "dotenv/config"; // <--- Tambahkan baris ini di paling atas
 import { defineConfig, env } from "prisma/config";
 
 export default defineConfig({
