@@ -7,7 +7,6 @@ const cors = require('cors');
 //import routes
 const adminRoutes = require('./routes/adminRoutes');
 
-
 dotenv.config();
 connectDB();
 
@@ -16,7 +15,7 @@ const app = express();
 app.use(cors()); 
 app.use(express.json());
 
-
+//upload folder
 app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
 
 //routes
