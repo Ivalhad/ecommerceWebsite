@@ -1,5 +1,6 @@
 const User = require('../models/userModel');
 const generateToken = require('../utils/generateToken');
+const Blacklist = require('../models/tokenBlacklist');
 
 //login admin
 const authAdmin = async (req, res) => {
