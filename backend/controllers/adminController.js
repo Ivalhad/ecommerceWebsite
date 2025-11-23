@@ -70,4 +70,12 @@ const updateAdminProfile = async (req, res) => {
   }
 };
 
-module.exports = { authAdmin, getAdminProfile, updateAdminProfile};
+//admin logout
+const logoutAdmin = (req, res) => {
+
+  
+  res.status(200).json({ message: 'Admin logged out successfully' });
+};
+
+
+module.exports = { authAdmin, getAdminProfile, updateAdminProfile, logoutAdmin};
