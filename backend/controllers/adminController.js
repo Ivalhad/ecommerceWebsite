@@ -71,10 +71,26 @@ const updateAdminProfile = async (req, res) => {
 };
 
 //admin logout
-const logoutAdmin = (req, res) => {
+const logoutAdmin = async (req, res) => {
+  try {
+    // token dari header
+    const token = req.headers.authorization.split(' ')[1];
 
+    if (!token) {
+        return res.status(400).json({ message: 'Token not found' });
+    }
+
+    // masukkan token ke Blacklist
+    const blacklistedToken = new Blacklist({
+      token: token
+    });
+
+    await blacklistedToken.save();
   
-  res.status(200).json({ message: 'Admin logged out successfully' });
+    res.status(200).json({ message: 'Admin logged out successfully & token invalidated' });
+  } catch (error) {
+    res.status(500).json({ message: 'Logout failed', error: error.message });
+  }
 };
 
 
