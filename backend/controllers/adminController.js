@@ -20,4 +20,22 @@ const authAdmin = async (req, res) => {
     }
 }
 
-module.exports = { authAdmin };
+//admin profile
+const getAdminProfile = async (req, res) => {
+
+    const user = await User.findById(req.user._id);
+
+    if (user) {
+        res.json({
+            _id: user._id,
+            name: user.name,
+            email: user.email,
+            role: user.role,
+            phoneNumber: user.phoneNumber,
+        });
+    } else {
+        res.status(404).json({ message: 'Admin not found' });
+    }
+};
+
+module.exports = { authAdmin, getAdminProfile };
