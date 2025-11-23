@@ -1,11 +1,11 @@
-const user = require('../models/userModel');
+const User = require('../models/userModel');
 const generateToken = require('../utils/generateToken');
 
 //login admin
 const authAdmin = async (req, res) => {
     const {email, password} = req.body;
 
-    const user = await user.findOne ({ email });
+    const user = await User.findOne ({ email });
     //cek admin ada atau engga
     if (user && (await user.matchPassword(password)) && user.role === 'admin') {
         res.json({
