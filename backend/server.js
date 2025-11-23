@@ -4,6 +4,10 @@ const connectDB = require('./config/database')
 const path = require('path');
 const cors = require('cors');
 
+//import routes
+const adminRoutes = require('./routes/adminRoutes');
+
+
 dotenv.config();
 connectDB();
 
@@ -15,6 +19,10 @@ app.use(express.json());
 
 app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
 
+//routes
+app.use('/api/admin', adminRoutes);
+
+//default route
 app.get('/', (req, res) => {
   res.send('server is running...');
 });
