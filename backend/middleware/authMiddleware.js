@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/userModel');
 
-// Cek user login
+// cek user login
 const protect = async (req, res, next) => {
   let token;
 
@@ -10,7 +10,7 @@ const protect = async (req, res, next) => {
       token = req.headers.authorization.split(' ')[1];
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
       
-      // Masukkan data user ke request
+      // masukkan data user ke request
       req.user = await User.findById(decoded.id).select('-password');
       next();
     } catch (error) {
@@ -23,7 +23,7 @@ const protect = async (req, res, next) => {
   }
 };
 
-// 2. Cek apakah  admin?
+// cek apakah  admin
 const admin = (req, res, next) => {
   if (req.user && req.user.role === 'admin') {
     next();
