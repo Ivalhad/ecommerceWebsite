@@ -38,4 +38,36 @@ const getAdminProfile = async (req, res) => {
     }
 };
 
-module.exports = { authAdmin, getAdminProfile };
+//admmin update
+const updateAdminProfile = async (req, res) => {
+  
+  const user = await User.findById(req.user._id);
+
+  if (user) {
+    // update data jika ada input baru
+    user.name = req.body.name || user.name;
+    user.email = req.body.email || user.email;
+    user.phoneNumber = req.body.phoneNumber || user.phoneNumber;
+
+    // cek admmin mengirim password baru
+    if (req.body.password) {
+      user.password = req.body.password; 
+    }
+
+    const updatedUser = await user.save();
+
+    res.json({
+      _id: updatedUser._id,
+      name: updatedUser.name,
+      email: updatedUser.email,
+      role: updatedUser.role,
+      phoneNumber: updatedUser.phoneNumber,
+      //kirim token baru
+      token: generateToken(updatedUser._id), 
+    });
+  } else {
+    res.status(404).json({ message: 'User not found' });
+  }
+};
+
+module.exports = { authAdmin, getAdminProfile, updateAdminProfile};
