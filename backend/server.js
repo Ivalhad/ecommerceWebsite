@@ -10,6 +10,7 @@ const { notFound, errorHandler } = require('./middleware/errorMiddleware');
 //import routes
 const adminRoutes = require('./routes/adminRoutes');
 const uploadRoutes = require('./routes/uploadRoutes')
+const productRoutes = require('./routes/productRoutes');
 
 dotenv.config();
 connectDB();
@@ -24,6 +25,7 @@ app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
 // routes
 app.use('/api/admin', adminRoutes);
 app.use('/api/upload', uploadRoutes);
+app.use('/api/products', productRoutes);
 
 app.get('/', (req, res) => {
   res.send('Server is running...');
