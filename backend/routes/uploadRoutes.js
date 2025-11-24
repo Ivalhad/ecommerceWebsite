@@ -2,16 +2,16 @@ const path = require('path');
 const express = require('express');
 const multer = require('multer');
 
-const router = express.router();
+const router = express.Router();
 
 // config storage
 const storage = multer.diskStorage({
   destination(req, file, cb) {
-    // file lcoation
+    // save file
     cb(null, 'uploads/');
   },
   filename(req, file, cb) {
-    // fille name
+
     cb(
       null,
       `${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`
@@ -21,11 +21,11 @@ const storage = multer.diskStorage({
 
 // filter file only image
 function checkFileType(file, cb) {
-  
+
   const filetypes = /jpg|jpeg|png/;
-  
+
   const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
-  
+
   const mimetype = filetypes.test(file.mimetype);
 
   if (extname && mimetype) {
@@ -43,7 +43,7 @@ const upload = multer({
   },
 });
 
-// route endpoint
+// router endpoint upload
 router.post('/', upload.single('image'), (req, res) => {
   res.send(`/${req.file.path.replace(/\\/g, '/')}`);
 });

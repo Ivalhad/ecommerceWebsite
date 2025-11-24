@@ -1,4 +1,3 @@
-// File: backend/server.js
 const express = require('express');
 const dotenv = require('dotenv');
 const connectDB = require('./config/database');
@@ -8,7 +7,9 @@ const cors = require('cors');
 // import error middleware
 const { notFound, errorHandler } = require('./middleware/errorMiddleware');
 
+//import routes
 const adminRoutes = require('./routes/adminRoutes');
+const uploadRoutes = require('./routes/uploadRoutes')
 
 dotenv.config();
 connectDB();
@@ -22,6 +23,7 @@ app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
 
 // routes
 app.use('/api/admin', adminRoutes);
+app.use('/api/upload', uploadRoutes);
 
 app.get('/', (req, res) => {
   res.send('Server is running...');
