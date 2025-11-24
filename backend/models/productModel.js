@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const productSchema = mongoose.Schema({
-  // Kita simpan ID Admin yang menginput barang ini (Relasi ke User)
+
   user: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
