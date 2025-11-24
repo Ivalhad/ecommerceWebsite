@@ -89,4 +89,9 @@ const logoutAdmin = asyncHandler(async (req, res) => {
   res.status(200).json({ message: 'Admin logged out successfully' });
 });
 
-module.exports = { authAdmin, getAdminProfile, updateAdminProfile, logoutAdmin,};
+module.exports = { 
+  authAdmin, 
+  getAdminProfile, 
+  updateAdminProfile, 
+  logoutAdmin,
+};
