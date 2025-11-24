@@ -1,6 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const { authAdmin, getAdminProfile, updateAdminProfile, logoutAdmin } = require('../controllers/adminController');
+const { 
+    authAdmin, 
+    getAdminProfile, 
+    updateAdminProfile, 
+    logoutAdmin 
+} = require('../controllers/adminController');
 const { protect, admin } = require ('../middleware/authMiddleware')
 
 //route admin login

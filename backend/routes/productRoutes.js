@@ -11,12 +11,12 @@ const { protect, admin } = require('../middleware/authMiddleware');
 const upload = require('../middleware/uploadMiddleware'); 
 
 router.route('/')
-  .get(getProducts)
-  .post(protect, admin, upload.single('image'), createProduct);
+  .get(getProducts) // public
+  .post(protect, admin, upload.single('image'), createProduct); // admin
 
 router.route('/:id')
-  .get(getProductById)
-  .delete(protect, admin, deleteProduct)
-  .put(protect, admin, upload.single('image'), updateProduct);
+  .get(getProductById) // public 
+  .delete(protect, admin, deleteProduct) // admin
+  .put(protect, admin, upload.single('image'), updateProduct); // admin
 
 module.exports = router;
