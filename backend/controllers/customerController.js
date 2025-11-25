@@ -54,8 +54,26 @@ const loginUser = asyncHandler(async (req, res) => {
   }
 });
 
+//get user profile
+const getUserProfile = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user._id);
+
+  if (user) {
+    res.json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      phoneNumber: user.phoneNumber,
+    });
+  } else {
+    res.status(404);
+    throw new Error('user not found');
+  }
+});
 
 module.exports = {
     registerUser,
     loginUser,
+    getUserProfile
 }
