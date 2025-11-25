@@ -1,6 +1,7 @@
 const asyncHandler = require('express-async-handler');
 const User = require('../models/userModel');
 const generateToken = require('../utils/generateToken');
+const Blacklist = require('./../models/tokenBlacklist')
 
 // user register
 const registerUser = asyncHandler(async (req, res) => {
@@ -100,9 +101,28 @@ const updateUserProfile = asyncHandler(async (req, res) => {
   }
 });
 
+//logotu user
+const logoutUser = asyncHandler(async (req, res) => {
+  const token = req.headers.authorization.split(' ')[1];
+
+  if (!token) {
+    res.status(400);
+    throw new Error('Token not found');
+  }
+
+  const blacklistedToken = new Blacklist({
+    token: token,
+  });
+
+  await blacklistedToken.save();
+
+  res.status(200).json({ message: 'User logged out successfully' });
+});
+
 module.exports = {
     registerUser,
     loginUser,
     getUserProfile,
     updateUserProfile,
+    logoutUser,
 }
