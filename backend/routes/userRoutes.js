@@ -5,7 +5,8 @@ const {
   loginUser,
   getUserProfile,
   updateUserProfile,
-  logoutUser
+  logoutUser,
+  deleteUserAccount
 } = require('../controllers/customerController');
 const { protect } = require('../middleware/authMiddleware');
 
@@ -19,6 +20,7 @@ router.post('/logout', protect, logoutUser);
 // user profile
 router.route('/profile')
   .get(protect, getUserProfile)
-  .put(protect, updateUserProfile);
+  .put(protect, updateUserProfile)
+  .delete(protect, deleteUserAccount);
 
 module.exports = router;

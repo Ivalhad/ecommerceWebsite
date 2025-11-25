@@ -119,10 +119,24 @@ const logoutUser = asyncHandler(async (req, res) => {
   res.status(200).json({ message: 'User logged out successfully' });
 });
 
+// delete user
+const deleteUserAccount = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user._id);
+
+  if (user) {
+    await user.deleteOne();
+    res.json({ message: 'User account removed successfully' });
+  } else {
+    res.status(404);
+    throw new Error('User not found');
+  }
+});
+
 module.exports = {
     registerUser,
     loginUser,
     getUserProfile,
     updateUserProfile,
     logoutUser,
+    deleteUserAccount,
 }
