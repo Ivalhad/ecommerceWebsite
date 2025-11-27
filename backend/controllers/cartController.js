@@ -66,4 +66,17 @@ const getMyCart = asyncHandler(async (req, res) => {
   res.json(cart);
 })
 
-module.exports= { addToCart, getMyCart };
+// delete product in cart
+const clearCart = asyncHandler(async (req, res) => {
+  const cart = await Cart.findOne({ user: req.user._id });
+  if (cart) {
+    cart.cartItems = [];
+    await cart.save();
+    res.json({ message: 'Cart cleared' });
+  } else {
+    res.status(404);
+    throw new Error('Cart not found');
+  }
+});
+
+module.exports= { addToCart, getMyCart, clearCart };
