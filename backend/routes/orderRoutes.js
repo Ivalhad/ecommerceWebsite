@@ -12,4 +12,4 @@ router.route('/')
 
 router.route('/:id').get(protect, getOrderById); // get order by id
 
-  module.exports = router;
+module.exports = router;
