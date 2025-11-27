@@ -75,8 +75,11 @@ const removeItemFromCart = asyncHandler(async (req, res) => {
       (item) => item.product.toString() !== req.params.id
     );
 
-    await cart.save();
-    res.json(cart);
+    const updatedCart = await cart.save();
+    res.json({
+      message: 'Item removed', 
+      cart: updatedCart   
+    });
   } else {
     res.status(404);
     throw new Error('Cart not found');
