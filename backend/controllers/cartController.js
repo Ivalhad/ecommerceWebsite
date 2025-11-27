@@ -57,4 +57,13 @@ const addToCart = asyncHandler(async (req, res) => {
   }
 });
 
-module.exports= { addToCart };
+// get product in cart
+const getMyCart = asyncHandler(async (req, res) => {
+  const cart = await Cart.findOne({ user: req.user._id });
+  if (!cart) {
+    return res.json({ cartItems: [] });
+  }
+  res.json(cart);
+})
+
+module.exports= { addToCart, getMyCart };
