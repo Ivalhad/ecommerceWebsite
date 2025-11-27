@@ -66,6 +66,23 @@ const getMyCart = asyncHandler(async (req, res) => {
   res.json(cart);
 })
 
+// delete prodyct by id
+const removeItemFromCart = asyncHandler(async (req, res) => {
+  const cart = await Cart.findOne({ user: req.user._id });
+
+  if (cart) {
+    cart.cartItems = cart.cartItems.filter(
+      (item) => item.product.toString() !== req.params.id
+    );
+
+    await cart.save();
+    res.json(cart);
+  } else {
+    res.status(404);
+    throw new Error('Cart not found');
+  }
+});
+
 // delete all product in cart
 const clearCart = asyncHandler(async (req, res) => {
   const cart = await Cart.findOne({ user: req.user._id });
@@ -79,4 +96,9 @@ const clearCart = asyncHandler(async (req, res) => {
   }
 });
 
-module.exports= { addToCart, getMyCart, clearCart };
+module.exports= {
+    addToCart, 
+    getMyCart, 
+    clearCart,
+    removeItemFromCart
+ };
