@@ -66,7 +66,7 @@ const getMyCart = asyncHandler(async (req, res) => {
   res.json(cart);
 })
 
-// delete product in cart
+// delete all product in cart
 const clearCart = asyncHandler(async (req, res) => {
   const cart = await Cart.findOne({ user: req.user._id });
   if (cart) {
