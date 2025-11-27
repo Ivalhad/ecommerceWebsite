@@ -5,12 +5,15 @@ const {
   getOrderById,
   updateOrderToPaid,
   updateOrderToDelivered,
+  getMyOrders,
 } = require ('../controllers/orderController');
 const { protect, admin } = require ('../middleware/authMiddleware');
 
 router.route('/')
   .post(protect, addOrderItems) // user create order
 
+
+router.route('/myorders').get(protect, getMyOrders); // get history order (user)
 
 router.route('/:id').get(protect, getOrderById); // get order by id
 
