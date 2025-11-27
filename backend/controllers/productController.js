@@ -30,8 +30,29 @@ const createProduct = asyncHandler(async (req, res) => {
 
 // get all products
 const getProducts = asyncHandler(async (req, res) => {
-  const products = await Product.find({});
-  res.json(products);
+  // pagination size and page
+  const pageSize = 10; 
+  const page = Number(req.query.pageNumber) || 1;
+
+  // search keyword
+  const keyword = req.query.keyword
+    ? {
+        name: {
+          $regex: req.query.keyword,
+          $options: 'i', // case insensitive
+        },
+      }
+    : {};
+
+  // count total products
+  const count = await Product.countDocuments({ ...keyword });
+
+  // database query 
+  const products = await Product.find({ ...keyword })
+    .limit(pageSize)
+    .skip(pageSize * (page - 1));
+
+  res.json({ products, page, pages: Math.ceil(count / pageSize) });
 });
 
 // get product by id
