@@ -2,7 +2,7 @@ const asyncHandler = require('express-async-handler');
 const Order = require('../models/orderModel');
 const Product = require('../models/productModel');
 
-// create new order
+// create new order (user)
 const addOrderItems = asyncHandler(async (req, res) => {
   const {
     orderItems,
@@ -58,7 +58,7 @@ const addOrderItems = asyncHandler(async (req, res) => {
   }
 });
 
-// get detail order by id
+// get detail order by id (admin and user)
 const getOrderById = asyncHandler(async(req, res) => {
   const order = await Order.findById(req.params.id).populate('user', 'name email');
 
@@ -71,7 +71,7 @@ const getOrderById = asyncHandler(async(req, res) => {
 
 });
 
-// update status to paid
+// update status to paid (admin)
 const updateOrderToPaid = asyncHandler(async (req, res) => {
   const order = await Order.findById(req.params.id);
 
@@ -88,9 +88,27 @@ const updateOrderToPaid = asyncHandler(async (req, res) => {
   }
 });
 
+// update status to delivered (admin)
+const updateOrderToDelivered = asyncHandler(async (req, res) => {
+  const order = await Order.findById(req.params.id);
+
+  if (order) {
+    order.isDelivered = true;
+    order.deliveredAt = Date.now();
+    order.status = 'Shipped';
+
+    const updatedOrder = await order.save();
+    res.json(updatedOrder);
+  } else {
+    res.status(404);
+    throw new Error('Order not found');
+  }
+});
+
 
 module.exports = {
     addOrderItems,
     getOrderById,
     updateOrderToPaid,
+    updateOrderToDelivered,
 };
