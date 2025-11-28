@@ -10,7 +10,7 @@ const addOrderItems = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error('No order items');
   } else {
-    // validate order items
+    // validate data from DB
     const orderItemsWithRealData = await Promise.all(
       orderItems.map(async (item) => {
         const product = await Product.findById(item.product);
@@ -20,9 +20,8 @@ const addOrderItems = asyncHandler(async (req, res) => {
           throw new Error(`Product not found with id: ${item.product}`);
         }
 
-        // check stock
         if (product.countInStock < item.qty) {
-           res.status(400); // Bad Request
+           res.status(400);
            throw new Error(`Stok tidak cukup untuk produk: ${product.name}. Sisa: ${product.countInStock}`);
         }
         return {
@@ -53,14 +52,39 @@ const addOrderItems = asyncHandler(async (req, res) => {
     });
 
     const createdOrder = await order.save();
-    // 
+
+    // update stock
     for (const item of orderItems) {
       const product = await Product.findById(item.product);
-      // udpdate stock
       product.countInStock = product.countInStock - item.qty;
       await product.save();
     }
-    res.status(201).json(createdOrder);
+
+    // generate wa link
+    const adminPhoneNumber = '6287874261026'; 
+
+    let message = `Halo Admin Simply Shop! 👋\n`;
+    message += `Saya ingin konfirmasi pesanan baru.\n\n`;
+    message += `🆔 *ID Order:* ${createdOrder._id}\n`;
+    message += `👤 *Nama:* ${req.user.name}\n`; 
+    message += `📦 *Detail Pesanan:*\n`;
+
+    createdOrder.orderItems.forEach(item => {
+      message += `- ${item.name} (${item.qty}x) : Rp ${item.price.toLocaleString('id-ID')}\n`;
+    });
+
+    message += `\n🚚 *Ongkir:* Rp ${shippingPrice.toLocaleString('id-ID')}`;
+    message += `\n💰 *TOTAL BAYAR:* Rp ${totalPrice.toLocaleString('id-ID')}\n\n`;
+    message += `📍 *Alamat Kirim:*\n`;
+    message += `${createdOrder.shippingAddress.address}, ${createdOrder.shippingAddress.city}, ${createdOrder.shippingAddress.postalCode}\n`;
+    
+    const encodedMessage = encodeURIComponent(message);
+    const waUrl = `https://wa.me/${adminPhoneNumber}?text=${encodedMessage}`;
+
+    res.status(201).json({
+      order: createdOrder,
+      whatsAppUrl: waUrl 
+    });
   }
 });
 
