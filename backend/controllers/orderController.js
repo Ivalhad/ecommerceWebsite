@@ -1,6 +1,7 @@
 const asyncHandler = require('express-async-handler');
 const Order = require('../models/orderModel');
 const Product = require('../models/productModel');
+const User = require('../models/userModel');
 
 // create new order (user)
 const addOrderItems = asyncHandler(async (req, res) => {
@@ -147,11 +148,48 @@ const getOrders = asyncHandler(async (req, res) => {
   res.json(orders);
 });
 
+//get order status
+const getOrderSummary = asyncHandler(async (req, res) => {
+  // total order
+  const ordersCount = await Order.countDocuments();
+  const usersCount = await User.countDocuments();
+  const productsCount = await Product.countDocuments();
+
+  // total paid
+  const totalSalesData = await Order.aggregate([
+    { $match: { isPaid: true } },
+    { $group: { _id: null, total: { $sum: '$totalPrice' } } },
+  ]);
+
+  const totalSales = totalSalesData.length === 0 ? 0 : totalSalesData[0].total;
+
+  // grafis
+  const dailyOrders = await Order.aggregate([
+    {
+      $group: {
+        _id: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt' } },
+        orders: { $sum: 1 },
+        sales: { $sum: '$totalPrice' },
+      },
+    },
+    { $sort: { _id: 1 } }, //sort by day
+  ]);
+
+  res.json({
+    usersCount,
+    productsCount,
+    ordersCount,
+    totalSales,
+    dailyOrders,
+  });
+});
+
 module.exports = {
     addOrderItems,
     getOrderById,
     updateOrderToPaid,
     updateOrderToDelivered,
     getMyOrders,
-    getOrders
+    getOrders,
+    getOrderSummary
 };
