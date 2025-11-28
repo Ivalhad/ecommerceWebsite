@@ -7,12 +7,15 @@ const {
   updateOrderToDelivered,
   getMyOrders,
   getOrders,
+  getOrderSummary
 } = require ('../controllers/orderController');
 const { protect, admin } = require ('../middleware/authMiddleware');
 
 router.route('/')
   .post(protect, addOrderItems) // user create order
   .get(protect, admin, getOrders); // admin get all order user
+
+router.route('/summary').get(protect, admin, getOrderSummary); // get summary order
 
 router.route('/myorders').get(protect, getMyOrders); // get history order (user)
 
