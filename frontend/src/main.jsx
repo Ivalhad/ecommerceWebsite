@@ -9,7 +9,7 @@ import {
 import App from './App.jsx';
 import './index.css';
 
-const HomeScreen = () => <h1 className="text-2xl font-bold">Halaman Utama</h1>;
+import HomeScreen from './screens/HomeScreen.jsx'; 
 
 const router = createBrowserRouter(
   createRoutesFromElements(
