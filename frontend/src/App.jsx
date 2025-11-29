@@ -1,24 +1,22 @@
 import { Outlet } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Header from './components/Header';
+import Footer from './components/Footer'; 
 
 const App = () => {
   return (
-    <>
-      <header className="bg-gray-800 text-white p-4">
-        <div className="container mx-auto">SimplyShop Header</div>
-      </header>
+    <div className="flex flex-col min-h-screen">
+      <Header />
 
-      <main className="container mx-auto py-3 min-h-screen">
+      <main className="container mx-auto py-6 px-4 flex-grow">
         <Outlet />
       </main>
 
-      <footer className="bg-gray-800 text-white text-center p-4 mt-10">
-        <p>SimplyShop &copy; {new Date().getFullYear()}</p>
-      </footer>
+      <Footer />
 
       <ToastContainer />
-    </>
+    </div>
   );
 };
 
