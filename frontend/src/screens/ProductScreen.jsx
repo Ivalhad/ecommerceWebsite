@@ -1,11 +1,19 @@
 import { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import { FaStar, FaArrowLeft } from 'react-icons/fa';
+import { toast } from 'react-toastify';
+import { addToCart } from '../slices/cartSlice';
 
 const ProductScreen = () => {
   const [product, setProduct] = useState({});
   const { id: productId } = useParams();
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const { userInfo } = useSelector((state) => state.auth);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -14,11 +22,29 @@ const ProductScreen = () => {
         setProduct(data);
       } catch (error) {
         console.error("Error fetching product:", error);
+        toast.error("Gagal memuat produk");
       }
     };
 
     fetchProduct();
   }, [productId]);
+
+  const addToCartHandler = async () => {
+    if (!userInfo) {
+      toast.warn('Silakan login terlebih dahulu untuk belanja!');
+      navigate('/login');
+      return;
+    }
+
+    try {
+     
+      await dispatch(addToCart({ productId, qty: 1 })).unwrap();
+      toast.success('Produk berhasil masuk keranjang!');
+      navigate('/cart');
+    } catch (err) {
+      toast.error(err?.message || 'Gagal menambahkan ke keranjang');
+    }
+  };
 
   return (
     <>
@@ -71,10 +97,10 @@ const ProductScreen = () => {
               <button
                 className={`w-full py-4 px-6 rounded-xl text-white font-bold text-lg tracking-wide shadow-md transition transform hover:-translate-y-1 
                   ${product.countInStock > 0 
-                    ? 'bg-linear-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 cursor-pointer' 
+                    ? 'bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 cursor-pointer' 
                     : 'bg-gray-400 cursor-not-allowed'}`}
                 disabled={product.countInStock === 0}
-                onClick={() => alert("Fitur Keranjang segera hadir!")} 
+                onClick={addToCartHandler} 
               >
                 {product.countInStock > 0 ? 'Tambah ke Keranjang' : 'Stok Habis'}
               </button>
