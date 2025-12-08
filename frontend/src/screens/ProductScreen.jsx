@@ -22,55 +22,71 @@ const ProductScreen = () => {
 
   return (
     <>
-      <Link className='btn bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center mb-4' to='/'>
+      <Link className='btn bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center mb-6 transition-colors' to='/'>
         <FaArrowLeft className="mr-2"/> Kembali
       </Link>
 
       {product.name ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
+          
+          {/* KOLOM 1: GAMBAR (PERBAIKAN DI SINI) */}
           <div className="md:col-span-1">
-            <img
-              src={product.image}
-              alt={product.name}
-              className="w-full rounded-lg shadow-lg object-cover"
-            />
+            {/* 1. Container dikunci tingginya (h-[500px]).
+                2. bg-gray-50 memberikan background tipis agar terlihat rapi jika rasio gambar beda.
+                3. flex & justify-center memastikan gambar di tengah.
+            */}
+            <div className="h-[400px] md:h-[500px] w-full bg-gray-50 rounded-xl shadow-sm flex items-center justify-center overflow-hidden border border-gray-200">
+              <img
+                src={product.image}
+                alt={product.name}
+                // object-contain: Memaksa gambar masuk SEUTUHNYA ke dalam kotak (tidak terpotong/zoom).
+                // h-full w-full: Dimensi gambar mengikuti container.
+                className="h-full w-full object-contain p-2"
+              />
+            </div>
           </div>
 
-          <div className="md:col-span-1">
-            <div className="bg-white p-6 rounded-lg shadow-md">
-              <h3 className="text-3xl font-bold mb-2 text-gray-800">{product.name}</h3>
+          {/* KOLOM 2: INFORMASI PRODUK */}
+          <div className="md:col-span-1 flex flex-col justify-start">
+            <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100">
+              <h3 className="text-3xl font-extrabold mb-2 text-gray-800">{product.name}</h3>
               
               {/* Rating */}
-              <div className="flex items-center mb-4 text-yellow-500 text-lg">
-                <FaStar className="mr-1" />
-                <span className="text-gray-600 font-medium text-sm">
-                  {product.rating} dari {product.numReviews} ulasan
+              <div className="flex items-center mb-6">
+                <div className="flex text-yellow-400 text-lg">
+                  <FaStar />
+                </div>
+                <span className="ml-2 text-gray-600 font-medium">
+                  {product.rating} <span className="mx-1">|</span> {product.numReviews} ulasan
                 </span>
               </div>
 
-              <div className="border-t border-b border-gray-200 py-4 mb-4">
-                <p className="text-2xl font-bold text-gray-900 mb-2">
+              {/* Harga & Deskripsi */}
+              <div className="border-t border-b border-gray-100 py-6 mb-6">
+                <p className="text-4xl font-bold text-orange-600 mb-4">
                   Rp {product.price?.toLocaleString('id-ID')}
                 </p>
-                <p className="text-gray-600 leading-relaxed">
+                <p className="text-gray-600 leading-relaxed text-lg">
                   {product.description}
                 </p>
               </div>
 
-              <div className="flex justify-between items-center mb-6">
-                <span className="font-semibold text-gray-700">Status:</span>
-                <span className={`font-bold ${product.countInStock > 0 ? 'text-green-600' : 'text-red-600'}`}>
+              {/* Status Stok */}
+              <div className="flex justify-between items-center mb-8">
+                <span className="font-semibold text-gray-700 text-lg">Status:</span>
+                <span className={`font-bold px-3 py-1 rounded-full text-sm ${product.countInStock > 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
                   {product.countInStock > 0 ? 'Tersedia' : 'Habis'}
                 </span>
               </div>
 
+              {/* Tombol Add to Cart */}
               <button
-                className={`w-full py-3 px-6 rounded-lg text-white font-bold tracking-wide transition duration-200 
+                className={`w-full py-4 px-6 rounded-xl text-white font-bold text-lg tracking-wide shadow-md transition transform hover:-translate-y-1 
                   ${product.countInStock > 0 
-                    ? 'bg-orange-500 hover:bg-orange-600 cursor-pointer' 
+                    ? 'bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 cursor-pointer' 
                     : 'bg-gray-400 cursor-not-allowed'}`}
                 disabled={product.countInStock === 0}
-                onClick={() => alert("Fitur Keranjang segera hadir!")} // Nanti kita ganti ini
+                onClick={() => alert("Fitur Keranjang segera hadir!")} 
               >
                 {product.countInStock > 0 ? 'Tambah ke Keranjang' : 'Stok Habis'}
               </button>
@@ -78,7 +94,10 @@ const ProductScreen = () => {
           </div>
         </div>
       ) : (
-        <p className="text-center text-xl mt-10">Memuat Produk...</p>
+        // Loading State
+        <div className="flex justify-center items-center h-64">
+           <p className="text-xl text-gray-500 animate-pulse">Memuat Produk...</p>
+        </div>
       )}
     </>
   );
