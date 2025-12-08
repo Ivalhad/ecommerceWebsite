@@ -37,7 +37,6 @@ const ProductScreen = () => {
     }
 
     try {
-     
       await dispatch(addToCart({ productId, qty: 1 })).unwrap();
       toast.success('Produk berhasil masuk keranjang!');
       navigate('/cart');
@@ -97,7 +96,7 @@ const ProductScreen = () => {
               <button
                 className={`w-full py-4 px-6 rounded-xl text-white font-bold text-lg tracking-wide shadow-md transition transform hover:-translate-y-1 
                   ${product.countInStock > 0 
-                    ? 'bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 cursor-pointer' 
+                    ? 'bg-linear-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 cursor-pointer' 
                     : 'bg-gray-400 cursor-not-allowed'}`}
                 disabled={product.countInStock === 0}
                 onClick={addToCartHandler} 
