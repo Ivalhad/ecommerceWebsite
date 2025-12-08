@@ -9,7 +9,7 @@ const App = () => {
     <div className="flex flex-col min-h-screen">
       <Header />
 
-      <main className="container mx-auto py-6 px-4 flex-grow">
+      <main className="container mx-auto py-6 px-4 grow">
         <Outlet />
       </main>
 
