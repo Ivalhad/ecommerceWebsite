@@ -8,12 +8,15 @@ import {
 } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import store from './store.js';
-import LoginScreen from './screens/LoginScreen.jsx';
 
 import App from './App.jsx';
 import './index.css';
+
+// Import Screens
 import HomeScreen from './screens/HomeScreen.jsx';
 import ProductScreen from './screens/ProductScreen.jsx';
+import LoginScreen from './screens/LoginScreen.jsx';
+import CartScreen from './screens/CartScreen.jsx'; 
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -21,6 +24,7 @@ const router = createBrowserRouter(
       <Route index={true} path='/' element={<HomeScreen />} />
       <Route path='/product/:id' element={<ProductScreen />} />
       <Route path='/login' element={<LoginScreen />} />
+      <Route path='/cart' element={<CartScreen />} />
     </Route>
   )
 );
