@@ -11,23 +11,28 @@ const SearchBox = () => {
     e.preventDefault();
     if (keyword.trim()) {
       navigate(`/search/${keyword}`);
-      setKeyword('');
     } else {
       navigate('/');
     }
   };
 
   return (
-    <form onSubmit={submitHandler} className="flex w-full max-w-sm ml-4">
-      <input
-        type="text"
-        name="q"
-        onChange={(e) => setKeyword(e.target.value)}
-        value={keyword}
-        placeholder="Cari produk..."
-        className="w-full px-4 py-2 border-none rounded-l-lg focus:ring-2 focus:ring-orange-500 text-gray-800"
-      />
-      <button type="submit" className="p-2 bg-orange-500 text-white rounded-r-lg hover:bg-orange-600 transition">
+    <form onSubmit={submitHandler} className="flex w-full max-w-md mx-auto">
+      <div className="relative w-full">
+        <input
+          type="text"
+          name="q"
+          onChange={(e) => setKeyword(e.target.value)}
+          value={keyword}
+          placeholder="Cari produk apa..."
+          className="w-full px-5 py-2.5 bg-white border-none rounded-l-full text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 shadow-md"
+        />
+      </div>
+      
+      <button 
+        type="submit" 
+        className="px-6 bg-orange-500 text-white rounded-r-full hover:bg-orange-600 transition-colors duration-200 shadow-md flex items-center justify-center"
+      >
         <FaSearch />
       </button>
     </form>
