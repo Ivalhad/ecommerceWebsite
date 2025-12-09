@@ -34,7 +34,7 @@ const CartScreen = () => {
 
   // cekout
   const checkoutHandler = () => {
-    alert("Tahap selanjutnya: Kita akan membuat Halaman Pengiriman (Shipping)!");
+    navigate('/shipping');
   };
 
   const totalPrice = cartItems.reduce((acc, item) => acc + item.price * item.qty, 0);
