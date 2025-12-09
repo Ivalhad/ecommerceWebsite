@@ -1,47 +1,83 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react'; // <--- Tambah useCallback
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
-import { FaStar, FaArrowLeft } from 'react-icons/fa';
+import { FaStar, FaArrowLeft, FaUserCircle } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import { addToCart } from '../slices/cartSlice';
 
 const ProductScreen = () => {
   const [product, setProduct] = useState({});
-  const { id: productId } = useParams();
+  const [rating, setRating] = useState(0);
+  const [comment, setComment] = useState('');
+  const [loadingReview, setLoadingReview] = useState(false);
 
+  const { id: productId } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const { userInfo } = useSelector((state) => state.auth);
 
-  useEffect(() => {
-    const fetchProduct = async () => {
-      try {
-        const { data } = await axios.get(`/api/products/${productId}`);
-        setProduct(data);
-      } catch (error) {
-        console.error("Error fetching product:", error);
-        toast.error("Gagal memuat produk");
-      }
-    };
-
-    fetchProduct();
+  const fetchProduct = useCallback(async () => {
+    try {
+      const { data } = await axios.get(`/api/products/${productId}`);
+      setProduct(data);
+    } catch (error) {
+      console.error("Error fetching product:", error);
+      toast.error("Gagal memuat produk");
+    }
   }, [productId]);
 
+  useEffect(() => {
+    fetchProduct();
+  }, [fetchProduct]);
+
+  // add to cart
   const addToCartHandler = async () => {
     if (!userInfo) {
       toast.warn('Silakan login terlebih dahulu untuk belanja!');
       navigate('/login');
       return;
     }
-
     try {
       await dispatch(addToCart({ productId, qty: 1 })).unwrap();
       toast.success('Produk berhasil masuk keranjang!');
       navigate('/cart');
     } catch (err) {
       toast.error(err?.message || 'Gagal menambahkan ke keranjang');
+    }
+  };
+
+  // review
+  const submitHandler = async (e) => {
+    e.preventDefault();
+    if (!rating || !comment) {
+      toast.error('Harap beri penilaian dan komentar');
+      return;
+    }
+
+    setLoadingReview(true);
+    try {
+      const config = {
+        headers: {
+          Authorization: `Bearer ${userInfo.token}`,
+        },
+      };
+
+      await axios.post(
+        `/api/products/${productId}/reviews`,
+        { rating, comment },
+        config
+      );
+
+      toast.success('Review berhasil dikirim!');
+      setRating(0);
+      setComment('');
+      fetchProduct(); 
+    } catch (err) {
+      toast.error(err.response?.data?.message || err.message);
+    } finally {
+      setLoadingReview(false);
     }
   };
 
@@ -54,6 +90,7 @@ const ProductScreen = () => {
       {product.name ? (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
           
+          {/* image */}
           <div className="md:col-span-1">
             <div className="h-[500px] w-full bg-gray-100 rounded-xl shadow-md overflow-hidden border border-gray-200 relative">
               <img
@@ -64,8 +101,11 @@ const ProductScreen = () => {
             </div>
           </div>
 
+          {/* --- review --- */}
           <div className="md:col-span-1 flex flex-col justify-start">
-            <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100">
+            
+            {/* detail product*/}
+            <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100 mb-8">
               <h3 className="text-3xl font-extrabold mb-2 text-gray-800">{product.name}</h3>
               
               <div className="flex items-center mb-6">
@@ -103,6 +143,88 @@ const ProductScreen = () => {
               >
                 {product.countInStock > 0 ? 'Tambah ke Keranjang' : 'Stok Habis'}
               </button>
+            </div>
+
+            <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100">
+              <h2 className="text-2xl font-bold text-gray-800 mb-6">Ulasan Pelanggan</h2>
+              
+              {product.reviews.length === 0 && (
+                <div className="p-4 bg-blue-50 text-blue-700 rounded-lg mb-4">
+                  Belum ada ulasan. Jadilah yang pertama mereview produk ini!
+                </div>
+              )}
+
+              <div className="space-y-6 mb-8 max-h-96 overflow-y-auto pr-2">
+                {product.reviews.map((review) => (
+                  <div key={review._id} className="border-b border-gray-100 pb-4">
+                    <div className="flex items-center mb-2">
+                      <FaUserCircle className="text-gray-400 text-3xl mr-3" />
+                      <div>
+                        <strong className="text-gray-800 block">{review.name}</strong>
+
+                        <div className="flex text-yellow-400 text-xs">
+                          {[...Array(5)].map((_, i) => (
+                            <FaStar key={i} className={i < review.rating ? 'text-yellow-400' : 'text-gray-300'} />
+                          ))}
+                        </div>
+                      </div>
+                      <span className="ml-auto text-xs text-gray-500">
+                        {review.createdAt.substring(0, 10)}
+                      </span>
+                    </div>
+                    <p className="text-gray-600 mt-2">{review.comment}</p>
+                  </div>
+                ))}
+              </div>
+
+              {/* form review */}
+              <div className="border-t border-gray-200 pt-6">
+                <h3 className="text-lg font-bold text-gray-800 mb-4">Tulis Ulasan Anda</h3>
+                
+                {userInfo ? (
+                  <form onSubmit={submitHandler}>
+                    <div className="mb-4">
+                      <label className="block text-gray-700 text-sm font-bold mb-2">Rating</label>
+                      <select
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                        value={rating}
+                        onChange={(e) => setRating(Number(e.target.value))}
+                      >
+                        <option value="">Pilih...</option>
+                        <option value="1">1 - Sangat Buruk</option>
+                        <option value="2">2 - Buruk</option>
+                        <option value="3">3 - Biasa Saja</option>
+                        <option value="4">4 - Bagus</option>
+                        <option value="5">5 - Sangat Bagus</option>
+                      </select>
+                    </div>
+
+                    <div className="mb-4">
+                      <label className="block text-gray-700 text-sm font-bold mb-2">Komentar</label>
+                      <textarea
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                        rows="3"
+                        value={comment}
+                        onChange={(e) => setComment(e.target.value)}
+                        placeholder="Bagaimana kualitas produk ini?"
+                      ></textarea>
+                    </div>
+
+                    <button
+                      type="submit"
+                      disabled={loadingReview}
+                      className="w-full bg-slate-800 text-white py-2 px-4 rounded-lg hover:bg-slate-700 transition font-semibold"
+                    >
+                      {loadingReview ? 'Mengirim...' : 'Kirim Ulasan'}
+                    </button>
+                  </form>
+                ) : (
+                  <div className="p-4 bg-orange-50 text-orange-800 rounded-lg border border-orange-200">
+                    Silakan <Link to="/login" className="font-bold underline">Login</Link> untuk menulis ulasan.
+                  </div>
+                )}
+              </div>
+
             </div>
           </div>
         </div>
