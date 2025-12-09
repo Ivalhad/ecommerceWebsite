@@ -1,23 +1,20 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
-// get token from auth
-const getAuthConfig = (getState) => {
-  const { auth } = getState(); 
-  const token = auth.userInfo?.token; 
-
-  return {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  };
-};
-
 // fetch Cart
 export const fetchCart = createAsyncThunk('cart/fetchCart', async (_, { getState, rejectWithValue }) => {
   try {
-    
-    const { data } = await axios.get('/api/cart', getAuthConfig(getState));
+
+    const { auth } = getState();
+    const token = auth.userInfo?.token;
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+
+    const { data } = await axios.get('/api/cart', config);
     return data;
   } catch (err) {
     return rejectWithValue(err.response?.data?.message || err.message);
@@ -27,40 +24,42 @@ export const fetchCart = createAsyncThunk('cart/fetchCart', async (_, { getState
 // add to Cart
 export const addToCart = createAsyncThunk('cart/addToCart', async ({ productId, qty }, { getState, rejectWithValue }) => {
   try {
-    const { data } = await axios.post(
-      '/api/cart', 
-      { productId, qty }, 
-      getAuthConfig(getState) 
-    );
+    const { auth } = getState();
+    const token = auth.userInfo?.token;
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+
+    const { data } = await axios.post('/api/cart', { productId, qty }, config);
     return data;
   } catch (err) {
     return rejectWithValue(err.response?.data?.message || err.message);
   }
 });
 
-// remove from Cart
+// remove from Cart 
 export const removeFromCart = createAsyncThunk('cart/removeFromCart', async (productId, { getState, rejectWithValue }) => {
   try {
-    const { data } = await axios.delete(
-      `/api/cart/${productId}`, 
-      getAuthConfig(getState) 
-    );
+    const { auth } = getState();
+    const token = auth.userInfo?.token;
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+
+    const { data } = await axios.delete(`/api/cart/${productId}`, config);
     return data; 
   } catch (err) {
     return rejectWithValue(err.response?.data?.message || err.message);
   }
 });
 
-// clear Cart
-export const clearCart = createAsyncThunk('cart/clearCart', async (_, { getState, rejectWithValue }) => {
-    try {
-      const { data } = await axios.delete('/api/cart', getAuthConfig(getState));
-      return data;
-    } catch (err) {
-      return rejectWithValue(err.response?.data?.message || err.message);
-    }
-  });
-
+//clear Cart (Bersihkan Keranjang
 const cartSlice = createSlice({
   name: 'cart',
   initialState: {
@@ -76,10 +75,11 @@ const cartSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+
       .addCase(fetchCart.pending, (state) => { state.loading = true; })
       .addCase(fetchCart.fulfilled, (state, action) => {
         state.loading = false;
-       
+        
         state.cartItems = action.payload.cartItems || []; 
       })
       .addCase(fetchCart.rejected, (state, action) => {
@@ -87,22 +87,14 @@ const cartSlice = createSlice({
         state.error = action.payload;
       })
 
-      // Add to Cart
       .addCase(addToCart.fulfilled, (state, action) => {
+
         state.cartItems = action.payload.cartItems; 
       })
-      .addCase(addToCart.rejected, (state, action) => {
-        state.error = action.payload;
-      })
 
-      // Remove from Cart
+      // remove from Cart
       .addCase(removeFromCart.fulfilled, (state, action) => {
-        state.cartItems = action.payload.cart.cartItems;
-      })
-      
-      // Clear Cart
-      .addCase(clearCart.fulfilled, (state) => {
-        state.cartItems = [];
+        state.cartItems = action.payload.cartItems;
       });
   },
 });
