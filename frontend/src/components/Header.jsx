@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux'; 
 import { logout } from '../slices/authSlice';
 import { fetchCart, clearCartLocal } from '../slices/cartSlice';
+import SearchBox from './SearchBox';
 import axios from 'axios';
 
 const Header = () => {
@@ -41,13 +42,18 @@ const Header = () => {
     <header className="bg-slate-800 text-white shadow-lg sticky top-0 z-50">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
         
+        {/* Logo */}
         <Link to="/" className="text-2xl font-bold tracking-wider text-orange-500 hover:text-orange-400 transition">
           SimplyShop
         </Link>
 
-        
+        {/* search box */}
+        <div className="hidden md:block flex-1 max-w-md mx-auto">
+           <SearchBox />
+        </div>
+
+        {/* cart user */}
         <div className="flex space-x-6 items-center">
-          
           <Link to="/cart" className="flex items-center space-x-1 hover:text-gray-300 transition relative">
             <FaShoppingCart className="text-xl" />
             <span className="hidden md:inline">Cart</span>
