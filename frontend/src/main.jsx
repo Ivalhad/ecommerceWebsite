@@ -16,7 +16,7 @@ import './index.css';
 import HomeScreen from './screens/HomeScreen.jsx';
 import ProductScreen from './screens/ProductScreen.jsx';
 import LoginScreen from './screens/LoginScreen.jsx';
-import CartScreen from './screens/CartScreen.jsx'; 
+import CartScreen from './screens/CartScreen.jsx';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
