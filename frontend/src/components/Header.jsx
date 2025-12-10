@@ -1,19 +1,23 @@
 import { useEffect } from 'react';
 import { FaShoppingCart, FaUser, FaSignOutAlt } from 'react-icons/fa';
-import { Link, useNavigate } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux'; 
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../slices/authSlice';
 import { fetchCart, clearCartLocal } from '../slices/cartSlice';
-import SearchBox from './SearchBox';
 import axios from 'axios';
+import SearchBox from './SearchBox';
 
 const Header = () => {
-  //get data user
   const { userInfo } = useSelector((state) => state.auth);
   const { cartItems } = useSelector((state) => state.cart);
   
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation(); 
+  const hideSearchRoutes = ['/login', '/register'];
+  
+  // Cek apakah URL saat ini ada di dalam daftar di atas?
+  const showSearch = !hideSearchRoutes.includes(location.pathname);
 
   useEffect(() => {
     if (userInfo) {
@@ -35,25 +39,25 @@ const Header = () => {
     }
   };
 
-  // count total items
   const totalItems = cartItems.reduce((acc, item) => acc + item.qty, 0);
 
   return (
     <header className="bg-slate-800 text-white shadow-lg sticky top-0 z-50">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-        
-        {/* Logo */}
+        {/* logo */}
         <Link to="/" className="text-2xl font-bold tracking-wider text-orange-500 hover:text-orange-400 transition">
           SimplyShop
         </Link>
 
-        {/* search box */}
-        <div className="hidden md:block flex-1 max-w-md mx-auto">
-           <SearchBox />
-        </div>
+        {/* --- search box --- */}
+        {showSearch && (
+          <div className="hidden md:block flex-1 max-w-md mx-auto">
+             <SearchBox />
+          </div>
+        )}
 
-        {/* cart user */}
         <div className="flex space-x-6 items-center">
+          {/* cart */}
           <Link to="/cart" className="flex items-center space-x-1 hover:text-gray-300 transition relative">
             <FaShoppingCart className="text-xl" />
             <span className="hidden md:inline">Cart</span>
@@ -65,6 +69,7 @@ const Header = () => {
             )}
           </Link>
 
+          {/* login /logout*/}
           {userInfo ? (
             <div className="flex items-center space-x-4">
               <span className="text-orange-400 font-semibold hidden md:inline">
