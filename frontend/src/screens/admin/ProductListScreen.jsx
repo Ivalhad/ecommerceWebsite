@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
 import { FaEdit, FaTrash, FaPlus } from 'react-icons/fa';
@@ -7,6 +7,7 @@ import { toast } from 'react-toastify';
 import Paginate from '../../components/Paginate';
 
 const ProductListScreen = () => {
+  const navigate = useNavigate();
   const { pageNumber } = useParams();
   const [products, setProducts] = useState([]);
   const [page, setPage] = useState(1);
@@ -51,17 +52,10 @@ const ProductListScreen = () => {
     }
   };
 
-
-  const createProductHandler = async () => {
-      if (window.confirm('Buat produk baru?')) {
-        try {
-           
-            alert("Fitur Create akan kita buat selanjutnya!");
-        } catch (err) {
-            toast.error(err.message);
-        }
-      }
-  }
+  // create product handler
+  const createProductHandler = () => {
+    navigate('/admin/product/create');
+  };
 
   if (loading) return <h2 className="text-center mt-10">Memuat Data...</h2>;
 
