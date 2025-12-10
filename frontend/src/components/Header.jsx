@@ -13,11 +13,14 @@ const Header = () => {
   
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const location = useLocation(); 
-  const hideSearchRoutes = ['/login', '/register'];
+  const location = useLocation();
+
+  // --- LOGIKA MENYEMBUNYIKAN MENU ---
+  // Daftar halaman "bersih" (tanpa search bar & menu kanan)
+  const hideMenuRoutes = ['/login', '/register'];
   
-  // Cek apakah URL saat ini ada di dalam daftar di atas?
-  const showSearch = !hideSearchRoutes.includes(location.pathname);
+  // Cek apakah kita sedang berada di salah satu halaman tersebut?
+  const showMenus = !hideMenuRoutes.includes(location.pathname);
 
   useEffect(() => {
     if (userInfo) {
@@ -49,48 +52,50 @@ const Header = () => {
           SimplyShop
         </Link>
 
-        {/* --- search box --- */}
-        {showSearch && (
-          <div className="hidden md:block flex-1 max-w-md mx-auto">
-             <SearchBox />
-          </div>
-        )}
-
-        <div className="flex space-x-6 items-center">
-          {/* cart */}
-          <Link to="/cart" className="flex items-center space-x-1 hover:text-gray-300 transition relative">
-            <FaShoppingCart className="text-xl" />
-            <span className="hidden md:inline">Cart</span>
-            
-            {totalItems > 0 && (
-              <span className="absolute -top-2 -right-3 bg-orange-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
-                {totalItems}
-              </span>
-            )}
-          </Link>
-
-          {/* login /logout*/}
-          {userInfo ? (
-            <div className="flex items-center space-x-4">
-              <span className="text-orange-400 font-semibold hidden md:inline">
-                Halo, {userInfo.name}
-              </span>
-              <button 
-                onClick={logoutHandler}
-                className="flex items-center space-x-1 hover:text-red-400 transition cursor-pointer"
-                title="Logout"
-              >
-                <FaSignOutAlt />
-                <span className="hidden md:inline">Logout</span>
-              </button>
+        {showMenus && (
+          <>
+            {/* search box */}
+            <div className="hidden md:block flex-1 max-w-md mx-auto">
+               <SearchBox />
             </div>
-          ) : (
-            <Link to="/login" className="flex items-center space-x-1 hover:text-gray-300 transition">
-              <FaUser />
-              <span>Sign In</span>
-            </Link>
-          )}
-        </div>
+
+            <div className="flex space-x-6 items-center">
+              {/* cart */}
+              <Link to="/cart" className="flex items-center space-x-1 hover:text-gray-300 transition relative">
+                <FaShoppingCart className="text-xl" />
+                <span className="hidden md:inline">Cart</span>
+                
+                {totalItems > 0 && (
+                  <span className="absolute -top-2 -right-3 bg-orange-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                    {totalItems}
+                  </span>
+                )}
+              </Link>
+
+              {/* auth user */}
+              {userInfo ? (
+                <div className="flex items-center space-x-4">
+                  <span className="text-orange-400 font-semibold hidden md:inline">
+                    Halo, {userInfo.name}
+                  </span>
+                  <button 
+                    onClick={logoutHandler}
+                    className="flex items-center space-x-1 hover:text-red-400 transition cursor-pointer"
+                    title="Logout"
+                  >
+                    <FaSignOutAlt />
+                    <span className="hidden md:inline">Logout</span>
+                  </button>
+                </div>
+              ) : (
+                <Link to="/login" className="flex items-center space-x-1 hover:text-gray-300 transition">
+                  <FaUser />
+                  <span>Sign In</span>
+                </Link>
+              )}
+            </div>
+          </>
+        )}
       </div>
     </header>
   );
