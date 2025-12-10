@@ -84,17 +84,24 @@ const Header = () => {
                         <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-2 text-gray-800 border border-gray-200">
                           <Link 
                             to="/admin/productlist" 
-                            className="block px-4 py-2 hover:bg-gray-100"
+                            className="block px-4 py-2 hover:bg-gray-100 font-semibold text-orange-600"
                             onClick={() => setDropdownOpen(false)}
                           >
                             Produk
                           </Link>
                           <Link 
                             to="/admin/orderlist" 
-                            className="block px-4 py-2 hover:bg-gray-100"
+                            className="block px-4 py-2 hover:bg-gray-100 font-semibold text-orange-600"
                             onClick={() => setDropdownOpen(false)}
                           >
                             Pesanan
+                          </Link>
+                          <Link 
+                            to="/admin/dashboard" 
+                            className="block px-4 py-2 hover:bg-gray-100 font-semibold text-orange-600"
+                            onClick={() => setDropdownOpen(false)}
+                          >
+                            Dashboard Penjualan
                           </Link>
                         </div>
                       )}
