@@ -14,7 +14,9 @@ const Header = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
-  const [dropdownOpen, setDropdownOpen] = useState(false); // State untuk dropdown admin
+  
+  const [adminDropdownOpen, setAdminDropdownOpen] = useState(false);
+  const [userDropdownOpen, setUserDropdownOpen] = useState(false);
 
   const hideMenuRoutes = ['/login', '/register'];
   const showMenus = !hideMenuRoutes.includes(location.pathname);
@@ -68,57 +70,77 @@ const Header = () => {
               {userInfo ? (
                 <div className="flex items-center space-x-4 relative">
                   
-                  {/* admin menu*/}
+                  {/* admin menu */}
                   {userInfo.role === 'admin' && (
                     <div className="relative">
                       <button 
-                        onClick={() => setDropdownOpen(!dropdownOpen)}
+                        onClick={() => setAdminDropdownOpen(!adminDropdownOpen)}
                         className="flex items-center space-x-1 hover:text-orange-400 focus:outline-none"
                       >
                         <span>Admin</span>
                         <FaCaretDown />
                       </button>
                       
-                      {/* dropdown */}
-                      {dropdownOpen && (
-                        <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-2 text-gray-800 border border-gray-200">
+                      {adminDropdownOpen && (
+                        <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-2 text-gray-800 border border-gray-200 z-50">
+                          <Link 
+                            to="/admin/dashboard" 
+                            className="block px-4 py-2 hover:bg-gray-100 font-semibold text-orange-600"
+                            onClick={() => setAdminDropdownOpen(false)}
+                          >
+                            Dashboard
+                          </Link>
                           <Link 
                             to="/admin/productlist" 
-                            className="block px-4 py-2 hover:bg-gray-100 font-semibold text-orange-600"
-                            onClick={() => setDropdownOpen(false)}
+                            className="block px-4 py-2 hover:bg-gray-100"
+                            onClick={() => setAdminDropdownOpen(false)}
                           >
                             Produk
                           </Link>
                           <Link 
                             to="/admin/orderlist" 
-                            className="block px-4 py-2 hover:bg-gray-100 font-semibold text-orange-600"
-                            onClick={() => setDropdownOpen(false)}
+                            className="block px-4 py-2 hover:bg-gray-100"
+                            onClick={() => setAdminDropdownOpen(false)}
                           >
                             Pesanan
-                          </Link>
-                          <Link 
-                            to="/admin/dashboard" 
-                            className="block px-4 py-2 hover:bg-gray-100 font-semibold text-orange-600"
-                            onClick={() => setDropdownOpen(false)}
-                          >
-                            Dashboard Penjualan
                           </Link>
                         </div>
                       )}
                     </div>
                   )}
 
-                  <span className="text-orange-400 font-semibold hidden md:inline border-l border-gray-600 pl-4">
-                    {userInfo.name}
-                  </span>
-                  
-                  <button 
-                    onClick={logoutHandler}
-                    className="flex items-center space-x-1 hover:text-red-400 transition cursor-pointer"
-                    title="Logout"
-                  >
-                    <FaSignOutAlt />
-                  </button>
+                  {/*  user menu */}
+                  <div className="relative">
+                    <button 
+                        onClick={() => setUserDropdownOpen(!userDropdownOpen)}
+                        className="flex items-center space-x-2 focus:outline-none hover:text-orange-400 border-l border-gray-600 pl-4"
+                    >
+                        <span className="font-semibold hidden md:inline">{userInfo.name}</span>
+                        <FaCaretDown />
+                    </button>
+
+                    {userDropdownOpen && (
+                        <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-2 text-gray-800 border border-gray-200 z-50">
+                            <Link 
+                                to="/profile" 
+                                className="block px-4 py-2 hover:bg-gray-100 items-center"
+                                onClick={() => setUserDropdownOpen(false)}
+                            >
+                                <FaUser className="mr-2 text-gray-500" /> Profile
+                            </Link>
+                            <button 
+                                onClick={() => {
+                                    logoutHandler();
+                                    setUserDropdownOpen(false);
+                                }}
+                                className="block w-full text-left px-4 py-2 hover:bg-gray-100 items-center text-red-600"
+                            >
+                                <FaSignOutAlt className="mr-2" /> Logout
+                            </button>
+                        </div>
+                    )}
+                  </div>
+
                 </div>
               ) : (
                 <Link to="/login" className="flex items-center space-x-1 hover:text-gray-300 transition">
